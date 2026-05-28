@@ -1,55 +1,38 @@
-import re
-import spacy
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.ensemble import IsolationForest
 
-def cargar_modelo_spacy(idioma):
-
-    modelos = {
-        'es': 'es_core_news_sm',
-        'en': 'en_core_web_sm',
-        'fr': 'fr_core_news_sm'
-    }
-    
-    nombre_modelo = modelos.get(idioma, 'es_core_news_sm')
-    
-    try:
-        nlp = spacy.load(nombre_modelo)
-    except IOError:
-        raise IOError(
-            f"El modelo de spaCy '{nombre_modelo}' no está instalado en este entorno.\n")
-    return nlp
+from nltk.util import ngrams
+from collections import Counter
 
 
-def limpiar_comentario(texto, nlp):
+def detectar_outliers(textos):
 
-    if not isinstance(texto, str) or texto.strip() == "":
-        return ""
+    vectorizer = TfidfVectorizer()
 
-    texto = texto.lower()
-    texto = re.sub(r'https?://\S+|www\.\S+', '', texto)
-    doc = nlp(texto)
+    X = vectorizer.fit_transform(textos)
 
-    tokens_limpios = []
-    for token in doc:
-        if token.is_stop:
-            continue
-        if not token.is_alpha:
-            continue
-        if token.is_space:
-            continue
+    modelo = IsolationForest(
+        contamination=0.05,
+        random_state=42
+    )
 
-        # lematización 
-        tokens_limpios.append(token.lemma_)
+    predicciones = modelo.fit_predict(X)
 
-    # comentario limpio como una sola cadena de texto unida por espacios
-    return " ".join(tokens_limpios)
+    return predicciones
 
 
-def preprocesar_dataframe(df, columna_texto, nlp):
-    print(f"limpieza de texto en la columna '{columna_texto}'...")
-    df_resultado = df.copy()
-    
-    # Aplicamos la función fila por fila y guardamos el resultado en una nueva columna
-    df_resultado['texto_limpio'] = df_resultado[columna_texto].apply(lambda x: limpiar_comentario(x, nlp))
-    
-    print("limpieza y lematización lista!")
-    return df_resultado
+def generar_ngramas(textos, n=2, top=10):
+
+    todas = []
+
+    for texto in textos:
+
+        palabras = texto.split()
+
+        grams = ngrams(palabras, n)
+
+        todas.extend(grams)
+
+    contador = Counter(todas)
+
+    return contador.most_common(top)

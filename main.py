@@ -1,26 +1,19 @@
 import pandas as pd
 
-from src.cli import obtener_argumentos
+from src.preprocesamiento import detectar_outliers
+from src.sentimientos import analizar_sentimiento
 
-def main():
-    args = obtener_argumentos()
-    print(f"\nLeyendo el archivo: {args.input}...")
-    try:
+df = pd.read_csv("data/playas_prueba.csv")
 
-        df = pd.read_csv(args.input)
-    except Exception as e:
-        print(f"error al abrir el archivo CSV: {e}")
-        return
+comentarios = df["comentarios"].tolist()
 
-    print(f"Cargando el pipeline de lenguaje para el idioma: '{args.idioma}'...")
-    nlp = cargar_modelo_spacy(args.idioma)
-    df_procesado = preprocesar_dataframe(df, args.columna, nlp)
-    
+print("\nCOMENTARIOS:")
+print(comentarios)
 
-    print("\ndebug datos procesados")
-    print(df_procesado[[args.columna, 'texto_limpio']].head(3))
+print("\nOUTLIERS:")
+print(detectar_outliers(comentarios))
 
+print("\nSENTIMIENTOS:")
 
-
-if __name__ == '__main__':
-    main()
+for comentario in comentarios:
+    print(comentario, "->", analizar_sentimiento(comentario))
