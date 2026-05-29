@@ -5,9 +5,6 @@ from pysentimiento import create_analyzer
 from textblob import TextBlob
 from textblob_fr import PatternTagger, PatternAnalyzer
 
-
-# ── Clase principal ────────────────────────────────────────────────────────────
-
 class AnalizadorSentimientosPipeline:
     def __init__(self, idioma: str):
         self.idioma = idioma
@@ -45,7 +42,7 @@ class AnalizadorSentimientosPipeline:
         return "NEU"
 
 
-# ── Funciones del pipeline ─────────────────────────────────────────────────────
+
 
 def clasificar_sentimientos(textos: list, idioma: str = "es") -> list:
     """
@@ -108,10 +105,6 @@ def dividir_por_sentimiento(textos: list, etiquetas: list, indices_originales: l
 def resumen_sentimientos(etiquetas: list) -> dict:
     """
     Genera un resumen estadístico de las etiquetas de sentimiento.
-
-    Útil para que main.py lo imprima en el reporte final o
-    el Integrante 4 lo use en el dashboard.
-
     Retorna:
         dict con conteos y porcentajes por etiqueta
     """

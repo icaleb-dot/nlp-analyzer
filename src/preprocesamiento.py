@@ -77,7 +77,7 @@ def _generar_ngramas(textos: list, n: int, top_k: int = 15):
         return []
 
     conteo = Counter(todos)
-    # Convertir tuplas a strings legibles: ("buen", "hotel") → "buen hotel"
+    # tuplas a strings legibles
     return [(" ".join(ngrama), freq) for ngrama, freq in conteo.most_common(top_k)]
 
 

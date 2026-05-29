@@ -14,17 +14,15 @@ urls_spacy = [
 
 print("\nDescargando e instalando modelos de spaCy de forma directa...")
 for url in urls_spacy:
-    # Extraer el nombre del modelo de la URL para imprimirlo bonito
     nombre_modelo = url.split("/")[-1].split("-3.7.0")[0]
     print(f"\nProcesando: {nombre_modelo}...")
     try:
-        # Aquí forzamos pip install directo desde la URL
         subprocess.check_call([sys.executable, "-m", "pip", "install", url])
         print(f"-> {nombre_modelo} instalado con éxito.")
     except Exception as e:
         print(f"[X] Error al instalar {nombre_modelo}: {e}")
         
-# Sentimientos y Tópicos
+# Sentimientos y tópicos
 print("\nDescargando modelos de Deep Learning para Sentimientos y Tópicos...")
 try:
     from pysentimiento import create_analyzer
